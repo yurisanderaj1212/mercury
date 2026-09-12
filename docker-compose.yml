@@ -1,0 +1,73 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: mercury_dev
+      POSTGRES_USER: mercury
+      POSTGRES_PASSWORD: mercury_local
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U mercury -d mercury_dev']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  api:
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile.dev
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://mercury:mercury_local@db:5432/mercury_dev
+      REDIS_URL: redis://redis:6379
+      NODE_ENV: development
+      JWT_SECRET: dev-secret-change-in-production-32chars
+      JWT_EXPIRY: '86400'
+      PORT: '3001'
+    ports:
+      - '3001:3001'
+    volumes:
+      - ./apps/api:/app
+      - /app/node_modules
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  web:
+    build:
+      context: ./apps/web
+      dockerfile: Dockerfile.dev
+    restart: unless-stopped
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:3001/api/v1
+      NODE_ENV: development
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./apps/web:/app
+      - /app/node_modules
+    depends_on:
+      - api
+
+volumes:
+  postgres_data:
+  redis_data:

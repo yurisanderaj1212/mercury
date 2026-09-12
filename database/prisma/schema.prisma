@@ -1,0 +1,498 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── ENUMS ────────────────────────────────────────────────────────────────────
+
+enum UserRole {
+  PERSONAL
+  BUSINESS
+  SELLER
+  ADMIN
+}
+
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+}
+
+enum Currency {
+  CUP
+  USD
+  MLC
+  EUR
+}
+
+enum PublicationStatus {
+  DRAFT
+  PENDING
+  ACTIVE
+  INACTIVE
+  EXPIRED
+  DELETED
+}
+
+enum AlertType {
+  PRICE_BELOW
+  PRICE_ABOVE
+  PRICE_CHANGE_PERCENT
+  NEW_PRODUCT_MATCH
+  HIGH_OPPORTUNITY
+  MARKET_CHANGE
+}
+
+enum AlertStatus {
+  ACTIVE
+  TRIGGERED
+  PAUSED
+  DISABLED
+  DELETED
+}
+
+enum SourceName {
+  FACEBOOK
+  REVOLICO
+  MANUAL
+  IMPORT
+  API
+}
+
+enum PlanName {
+  FREE
+  PROFESSIONAL
+  BUSINESS
+}
+
+// ─── USUARIOS ─────────────────────────────────────────────────────────────────
+
+model Role {
+  id    String   @id @default(uuid())
+  name  UserRole @unique
+  users User[]
+
+  @@map("roles")
+}
+
+model Location {
+  id           String  @id @default(uuid())
+  province     String
+  municipality String
+  zone         String?
+  latitude     Decimal? @db.Decimal(10, 7)
+  longitude    Decimal? @db.Decimal(10, 7)
+
+  users        User[]
+  publications Publication[]
+  alerts       Alert[]
+
+  @@unique([province, municipality, zone])
+  @@index([province])
+  @@index([municipality])
+  @@map("locations")
+}
+
+model User {
+  id           String     @id @default(uuid())
+  email        String     @unique
+  passwordHash String     @map("password_hash")
+  fullName     String     @map("full_name")
+  phone        String?
+  roleId       String     @map("role_id")
+  locationId   String?    @map("location_id")
+  status       UserStatus @default(ACTIVE)
+  avatarUrl    String?    @map("avatar_url")
+  lastLogin    DateTime?  @map("last_login")
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at")
+  deletedAt    DateTime?  @map("deleted_at")
+
+  role          Role                   @relation(fields: [roleId], references: [id])
+  location      Location?              @relation(fields: [locationId], references: [id])
+  favorites     Favorite[]
+  alerts        Alert[]
+  notifications Notification[]
+  searchHistory SearchHistory[]
+  logs          Log[]
+
+  @@index([email])
+  @@index([roleId])
+  @@index([status])
+  @@map("users")
+}
+
+// ─── CATÁLOGO ─────────────────────────────────────────────────────────────────
+
+model Category {
+  id               String    @id @default(uuid())
+  name             String
+  description      String?
+  slug             String    @unique
+  parentCategoryId String?   @map("parent_category_id")
+  createdAt        DateTime  @default(now()) @map("created_at")
+
+  parent   Category?  @relation("CategoryHierarchy", fields: [parentCategoryId], references: [id])
+  children Category[] @relation("CategoryHierarchy")
+  products Product[]
+
+  @@unique([name, parentCategoryId])
+  @@index([slug])
+  @@index([parentCategoryId])
+  @@map("categories")
+}
+
+model Brand {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  slug      String   @unique
+  createdAt DateTime @default(now()) @map("created_at")
+
+  products Product[]
+
+  @@index([slug])
+  @@map("brands")
+}
+
+model Product {
+  id          String   @id @default(uuid())
+  name        String
+  brandId     String?  @map("brand_id")
+  categoryId  String   @map("category_id")
+  description String?
+  slug        String   @unique
+  status      String   @default("ACTIVE")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  brand        Brand?             @relation(fields: [brandId], references: [id])
+  category     Category           @relation(fields: [categoryId], references: [id])
+  attributes   ProductAttribute[]
+  publications Publication[]
+  alerts       Alert[]
+
+  @@index([slug])
+  @@index([categoryId])
+  @@index([brandId])
+  @@map("products")
+}
+
+model ProductAttribute {
+  id        String  @id @default(uuid())
+  productId String  @map("product_id")
+  key       String
+  value     String
+  unit      String?
+
+  product Product @relation(fields: [productId], references: [id])
+
+  @@unique([productId, key])
+  @@index([productId])
+  @@map("product_attributes")
+}
+
+// ─── PUBLICACIONES ────────────────────────────────────────────────────────────
+
+model Source {
+  id   String     @id @default(uuid())
+  name SourceName @unique
+
+  publications Publication[]
+
+  @@map("sources")
+}
+
+model Seller {
+  id              String   @id @default(uuid())
+  name            String
+  phone           String?
+  email           String?
+  facebookProfile String?  @map("facebook_profile")
+  whatsapp        String?
+  rating          Decimal? @db.Decimal(3, 2)
+  verified        Boolean  @default(false)
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  publications Publication[]
+
+  @@index([phone])
+  @@map("sellers")
+}
+
+model Publication {
+  id              String            @id @default(uuid())
+  productId       String            @map("product_id")
+  sellerId        String            @map("seller_id")
+  sourceId        String            @map("source_id")
+  title           String
+  description     String?
+  price           Decimal           @db.Decimal(12, 2)
+  currency        Currency          @default(CUP)
+  locationId      String?           @map("location_id")
+  publicationUrl  String?           @map("publication_url")
+  publicationDate DateTime          @map("publication_date")
+  status          PublicationStatus @default(PENDING)
+  createdAt       DateTime          @default(now()) @map("created_at")
+  updatedAt       DateTime          @updatedAt @map("updated_at")
+
+  product      Product           @relation(fields: [productId], references: [id])
+  seller       Seller            @relation(fields: [sellerId], references: [id])
+  source       Source            @relation(fields: [sourceId], references: [id])
+  location     Location?         @relation(fields: [locationId], references: [id])
+  images       PublicationImage[]
+  priceHistory PriceHistory[]
+  favorites    Favorite[]
+
+  @@index([productId])
+  @@index([sellerId])
+  @@index([sourceId])
+  @@index([locationId])
+  @@index([status])
+  @@index([price])
+  @@index([publicationDate])
+  @@index([createdAt])
+  @@map("publications")
+}
+
+model PublicationImage {
+  id            String  @id @default(uuid())
+  publicationId String  @map("publication_id")
+  imageUrl      String  @map("image_url")
+  position      Int     @default(0)
+  ocrProcessed  Boolean @default(false) @map("ocr_processed")
+  aiProcessed   Boolean @default(false) @map("ai_processed")
+
+  publication Publication @relation(fields: [publicationId], references: [id])
+
+  @@index([publicationId])
+  @@map("publication_images")
+}
+
+model PriceHistory {
+  id            String   @id @default(uuid())
+  publicationId String   @map("publication_id")
+  price         Decimal  @db.Decimal(12, 2)
+  currency      Currency
+  capturedAt    DateTime @default(now()) @map("captured_at")
+
+  publication Publication @relation(fields: [publicationId], references: [id])
+
+  // NUNCA se modifica ni elimina — append-only
+  @@index([publicationId])
+  @@index([capturedAt])
+  @@map("price_history")
+}
+
+// ─── FAVORITOS Y ALERTAS ──────────────────────────────────────────────────────
+
+model Favorite {
+  id            String   @id @default(uuid())
+  userId        String   @map("user_id")
+  publicationId String   @map("publication_id")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  user        User        @relation(fields: [userId], references: [id])
+  publication Publication @relation(fields: [publicationId], references: [id])
+
+  @@unique([userId, publicationId])
+  @@index([userId])
+  @@index([publicationId])
+  @@map("favorites")
+}
+
+model Alert {
+  id             String      @id @default(uuid())
+  userId         String      @map("user_id")
+  productId      String      @map("product_id")
+  maximumPrice   Decimal     @db.Decimal(12, 2) @map("maximum_price")
+  currency       Currency    @default(CUP)
+  alertType      AlertType   @default(PRICE_BELOW) @map("alert_type")
+  changePercent  Decimal?    @db.Decimal(5, 2) @map("change_percent")
+  locationId     String?     @map("location_id")
+  status         AlertStatus @default(ACTIVE)
+  triggeredAt    DateTime?   @map("triggered_at")
+  triggeredPrice Decimal?    @db.Decimal(12, 2) @map("triggered_price")
+  createdAt      DateTime    @default(now()) @map("created_at")
+  updatedAt      DateTime    @updatedAt @map("updated_at")
+
+  user     User      @relation(fields: [userId], references: [id])
+  product  Product   @relation(fields: [productId], references: [id])
+  location Location? @relation(fields: [locationId], references: [id])
+
+  @@index([userId])
+  @@index([productId])
+  @@index([status])
+  @@index([alertType])
+  @@map("alerts")
+}
+
+// ─── NOTIFICACIONES Y ACTIVIDAD ───────────────────────────────────────────────
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  type      String
+  content   Json
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([read])
+  @@map("notifications")
+}
+
+model SearchHistory {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  query     String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@map("search_history")
+}
+
+model Log {
+  id        String   @id @default(uuid())
+  userId    String?  @map("user_id")
+  action    String
+  entity    String
+  entityId  String?  @map("entity_id")
+  metadata  Json?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User? @relation(fields: [userId], references: [id])
+
+  // NUNCA se elimina
+  @@index([userId])
+  @@index([entity])
+  @@index([entityId])
+  @@index([createdAt])
+  @@map("logs")
+}
+
+// ─── DATOS CRUDOS ─────────────────────────────────────────────────────────────
+
+model RawPublication {
+  id           String     @id @default(uuid())
+  source       SourceName
+  jsonOriginal Json       @map("json_original")
+  capturedAt   DateTime   @default(now()) @map("captured_at")
+
+  // Datos crudos originales — no se modifican
+  @@index([source])
+  @@index([capturedAt])
+  @@map("raw_publications")
+}
+
+// ─── SAAS SCAFFOLD (POST-MVP) ─────────────────────────────────────────────────
+
+model Organization {
+  id        String   @id @default(uuid())
+  name      String
+  slug      String   @unique
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  members      OrganizationMember[]
+  subscription Subscription?
+
+  @@index([slug])
+  @@map("organizations")
+}
+
+model OrganizationMember {
+  id             String   @id @default(uuid())
+  organizationId String   @map("organization_id")
+  userId         String   @map("user_id")
+  role           String   @default("MEMBER")
+  joinedAt       DateTime @default(now()) @map("joined_at")
+
+  organization Organization @relation(fields: [organizationId], references: [id])
+
+  @@unique([organizationId, userId])
+  @@index([userId])
+  @@map("organization_members")
+}
+
+model Plan {
+  id          String   @id @default(uuid())
+  name        PlanName @unique
+  alertLimit  Int      @default(20) @map("alert_limit")
+  priceUsd    Decimal  @db.Decimal(8, 2) @map("price_usd")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  subscriptions Subscription[]
+
+  @@map("plans")
+}
+
+model Subscription {
+  id             String    @id @default(uuid())
+  organizationId String?   @unique @map("organization_id")
+  planId         String    @map("plan_id")
+  status         String    @default("ACTIVE")
+  startDate      DateTime  @map("start_date")
+  endDate        DateTime? @map("end_date")
+  createdAt      DateTime  @default(now()) @map("created_at")
+
+  organization Organization? @relation(fields: [organizationId], references: [id])
+  plan         Plan          @relation(fields: [planId], references: [id])
+
+  @@index([status])
+  @@map("subscriptions")
+}
+
+model UserPreferences {
+  id                  String   @id @default(uuid())
+  userId              String   @unique @map("user_id")
+  defaultCurrency     Currency @default(CUP) @map("default_currency")
+  defaultMunicipality String?  @map("default_municipality")
+  emailNotifications  Boolean  @default(true) @map("email_notifications")
+  updatedAt           DateTime @updatedAt @map("updated_at")
+
+  @@map("user_preferences")
+}
+
+model NotificationPreferences {
+  id             String  @id @default(uuid())
+  userId         String  @unique @map("user_id")
+  alertTriggered Boolean @default(true) @map("alert_triggered")
+  newOpportunity Boolean @default(false) @map("new_opportunity")
+  marketChange   Boolean @default(false) @map("market_change")
+  weeklyDigest   Boolean @default(true) @map("weekly_digest")
+
+  @@map("notification_preferences")
+}
+
+model SystemEvent {
+  id        String   @id @default(uuid())
+  type      String
+  entityId  String?  @map("entity_id")
+  payload   Json
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([type])
+  @@index([createdAt])
+  @@map("system_events")
+}
+
+model AutomationLog {
+  id             String    @id @default(uuid())
+  taskName       String    @map("task_name")
+  status         String
+  itemsProcessed Int       @default(0) @map("items_processed")
+  errors         Json?
+  startedAt      DateTime  @map("started_at")
+  finishedAt     DateTime? @map("finished_at")
+
+  @@index([taskName])
+  @@index([startedAt])
+  @@map("automation_logs")
+}

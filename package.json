@@ -1,0 +1,39 @@
+{
+  "name": "mercury",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Mercury — SaaS Market Intelligence Platform for the Cuban market",
+  "engines": {
+    "node": ">=22.0.0",
+    "pnpm": ">=9.0.0"
+  },
+  "scripts": {
+    "dev": "pnpm --parallel --filter './apps/*' dev",
+    "build": "pnpm --recursive --filter './packages/*' build && pnpm --parallel --filter './apps/*' build",
+    "test": "pnpm --recursive test",
+    "lint": "pnpm --recursive lint",
+    "typecheck": "pnpm --recursive typecheck",
+    "db:generate": "pnpm --filter database prisma:generate",
+    "db:migrate": "pnpm --filter database prisma:migrate",
+    "db:migrate:prod": "pnpm --filter database prisma:migrate:prod",
+    "db:seed": "pnpm --filter database seed",
+    "db:indexes": "pnpm --filter database indexes",
+    "docker:up": "docker-compose up -d db redis",
+    "docker:down": "docker-compose down",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^15.2.10",
+    "typescript": "^5.7.3"
+  },
+  "lint-staged": {
+    "**/*.{ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "**/*.{json,md,yaml,yml}": [
+      "prettier --write"
+    ]
+  }
+}

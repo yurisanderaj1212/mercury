@@ -1,0 +1,10 @@
+{
+  "buildCommand": "pnpm --filter @mercury/web build",
+  "outputDirectory": "apps/web/.next",
+  "installCommand": "pnpm install --frozen-lockfile",
+  "framework": "nextjs",
+  "regions": ["iad1"],
+  "env": {
+    "NODE_ENV": "production"
+  }
+}

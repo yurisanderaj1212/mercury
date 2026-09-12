@@ -1,0 +1,17 @@
+{
+  "name": "@mercury/notifications",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "build": "tsc"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "prisma": "^6.2.0",
+    "typescript": "^5.7.3"
+  }
+}
