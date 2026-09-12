@@ -20,7 +20,7 @@
     "db:indexes": "pnpm --filter database indexes",
     "docker:up": "docker-compose up -d db redis",
     "docker:down": "docker-compose down",
-    "prepare": "husky"
+    "prepare": "node -e \"if(process.env.HUSKY !== '0' && !process.env.CI) require('child_process').execSync('husky', {stdio:'inherit'})\" || true"
   },
   "devDependencies": {
     "husky": "^9.1.7",
