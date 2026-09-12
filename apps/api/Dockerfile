@@ -15,8 +15,8 @@ COPY database/ ./database/
 # Install ALL deps — HUSKY=0 prevents prepare script from running husky
 RUN HUSKY=0 pnpm install --frozen-lockfile --filter @mercury/api...
 
-# Generate Prisma client using the local binary already installed
-RUN ./node_modules/.bin/prisma generate --schema=database/prisma/schema.prisma
+# Generate Prisma client using pnpm exec (resolves workspace binaries correctly)
+RUN pnpm exec prisma generate --schema=database/prisma/schema.prisma
 
 # Build the API
 RUN pnpm --filter @mercury/api build
