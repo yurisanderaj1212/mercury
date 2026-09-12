@@ -1,4 +1,6 @@
 {
+  "buildCommand": "cd ../.. && pnpm --filter @mercury/web build",
+  "installCommand": "cd ../.. && pnpm install --frozen-lockfile",
   "framework": "nextjs",
   "regions": ["iad1"]
 }
