@@ -12,13 +12,22 @@ async function bootstrap(): Promise<void> {
   // Security headers
   app.use(helmet());
 
-  // CORS — only allow known origins
-  const allowedOrigins = process.env.WEB_BASE_URL
-    ? [process.env.WEB_BASE_URL]
-    : ['http://localhost:3000'];
+  // CORS — allow configured origin + Vercel preview URLs
+  const webBaseUrl = process.env.WEB_BASE_URL ?? 'http://localhost:3000';
+  const allowedOrigins = [
+    webBaseUrl,
+    'http://localhost:3000',
+  ];
 
   app.enableCors({
-    origin: allowedOrigins,
+    origin: (origin, callback) => {
+      // Allow requests with no origin (mobile apps, curl, etc.)
+      if (!origin) return callback(null, true);
+      // Allow exact matches and any vercel.app subdomain of the project
+      const isAllowed = allowedOrigins.includes(origin) ||
+        /^https:\/\/mercury-web[a-z0-9-]*\.vercel\.app$/.test(origin);
+      callback(null, isAllowed);
+    },
     methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
