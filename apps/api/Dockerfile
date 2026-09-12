@@ -13,10 +13,11 @@ COPY apps/api/ ./apps/api/
 COPY database/ ./database/
 
 # Install ALL deps — HUSKY=0 prevents prepare script from running husky
-RUN HUSKY=0 pnpm install --frozen-lockfile --filter @mercury/api...
+# Include database package so prisma CLI is available
+RUN HUSKY=0 pnpm install --frozen-lockfile --filter @mercury/api... --filter database
 
-# Generate Prisma client using pnpm exec (resolves workspace binaries correctly)
-RUN pnpm exec prisma generate --schema=database/prisma/schema.prisma
+# Generate Prisma client
+RUN pnpm --filter database prisma:generate
 
 # Build the API
 RUN pnpm --filter @mercury/api build
