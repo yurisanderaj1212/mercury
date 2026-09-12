@@ -12,8 +12,8 @@ COPY packages/ ./packages/
 COPY apps/api/ ./apps/api/
 COPY database/ ./database/
 
-# Install ALL deps — skip prepare/husky in CI/Docker
-RUN HUSKY=0 pnpm install --frozen-lockfile --ignore-scripts=false --filter @mercury/api...
+# Install ALL deps — HUSKY=0 prevents prepare script from running husky
+RUN HUSKY=0 pnpm install --frozen-lockfile --filter @mercury/api...
 
 # Generate Prisma client (schema is at database/prisma/schema.prisma)
 RUN npx prisma generate --schema=database/prisma/schema.prisma
