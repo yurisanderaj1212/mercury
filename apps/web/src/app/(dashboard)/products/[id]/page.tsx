@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from '@/stores/auth.store';
 import { apiClient } from '@/lib/api-client';
@@ -50,7 +50,7 @@ const CLASSIFICATION_COLOR: Record<string, string> = {
   NO_RECOMENDADA: 'bg-red-100 text-red-700',
 };
 
-export default function ProductDetailPage(): JSX.Element {
+export default function ProductDetailPage(): React.JSX.Element {
   const { id } = useParams<{ id: string }>();
   const token = useAuthStore((s) => s.token);
   const queryClient = useQueryClient();
@@ -97,7 +97,6 @@ export default function ProductDetailPage(): JSX.Element {
 
   return (
     <div className="space-y-6 max-w-4xl">
-      {/* Header */}
       <div>
         <Link href="/products" className="text-xs text-gray-400 hover:text-gray-600">← Productos</Link>
         <h1 className="text-2xl font-bold mt-1">{product.name}</h1>
@@ -108,7 +107,6 @@ export default function ProductDetailPage(): JSX.Element {
         {product.description && <p className="text-sm text-gray-600 mt-2">{product.description}</p>}
       </div>
 
-      {/* Market stats */}
       <section className="border rounded-lg p-4">
         <div className="flex items-center justify-between mb-3">
           <h2 className="font-semibold text-sm">Estadísticas de mercado</h2>
@@ -119,7 +117,6 @@ export default function ProductDetailPage(): JSX.Element {
             + Crear alerta
           </button>
         </div>
-
         {loadingMarket ? (
           <div className="animate-pulse h-16 bg-gray-100 rounded" />
         ) : !market || market.activePublicationsCount === 0 ? (
@@ -134,7 +131,6 @@ export default function ProductDetailPage(): JSX.Element {
         )}
       </section>
 
-      {/* Price history chart */}
       {priceHistory && priceHistory.length > 0 && (
         <section className="border rounded-lg p-4">
           <h2 className="font-semibold text-sm mb-3">Historial de precios (30 días)</h2>
@@ -151,7 +147,6 @@ export default function ProductDetailPage(): JSX.Element {
         </section>
       )}
 
-      {/* Opportunities */}
       {market && market.opportunities && market.opportunities.length > 0 && (
         <section className="border rounded-lg p-4">
           <h2 className="font-semibold text-sm mb-3">Oportunidades de compra</h2>
@@ -193,7 +188,7 @@ export default function ProductDetailPage(): JSX.Element {
   );
 }
 
-function StatBox({ label, value, currency }: { label: string; value: number | null | undefined; currency?: string }): JSX.Element {
+function StatBox({ label, value, currency }: { label: string; value: number | null | undefined; currency?: string }): React.JSX.Element {
   return (
     <div className="bg-gray-50 rounded p-3 text-center">
       <p className="text-xs text-gray-500">{label}</p>
@@ -204,7 +199,7 @@ function StatBox({ label, value, currency }: { label: string; value: number | nu
   );
 }
 
-function AlertModal({ productId, productName, onClose }: { productId: string; productName: string; onClose: () => void }): JSX.Element {
+function AlertModal({ productId, productName, onClose }: { productId: string; productName: string; onClose: () => void }): React.JSX.Element {
   const token = useAuthStore((s) => s.token);
   const queryClient = useQueryClient();
   const [price, setPrice] = useState('');
@@ -229,7 +224,6 @@ function AlertModal({ productId, productName, onClose }: { productId: string; pr
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-lg p-6 w-full max-w-sm space-y-4">
         <h3 className="font-semibold">Nueva alerta — {productName}</h3>
-
         <div>
           <label className="text-xs text-gray-500 block mb-1">Tipo de alerta</label>
           <select value={alertType} onChange={(e) => setAlertType(e.target.value)} className="w-full border rounded px-2 py-1.5 text-sm">
@@ -239,34 +233,20 @@ function AlertModal({ productId, productName, onClose }: { productId: string; pr
             <option value="HIGH_OPPORTUNITY">Alta oportunidad</option>
           </select>
         </div>
-
         <div>
           <label className="text-xs text-gray-500 block mb-1">Precio umbral</label>
-          <input
-            type="number"
-            value={price}
-            onChange={(e) => setPrice(e.target.value)}
-            placeholder="25000"
-            className="w-full border rounded px-2 py-1.5 text-sm"
-          />
+          <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} placeholder="25000" className="w-full border rounded px-2 py-1.5 text-sm" />
         </div>
-
         <div>
           <label className="text-xs text-gray-500 block mb-1">Moneda</label>
           <select value={currency} onChange={(e) => setCurrency(e.target.value)} className="w-full border rounded px-2 py-1.5 text-sm">
             {['CUP', 'USD', 'MLC', 'EUR'].map((c) => <option key={c} value={c}>{c}</option>)}
           </select>
         </div>
-
         {error && <p className="text-red-500 text-xs">{error}</p>}
-
         <div className="flex gap-2 pt-1">
           <button onClick={onClose} className="flex-1 border rounded px-3 py-2 text-sm">Cancelar</button>
-          <button
-            onClick={() => mutation.mutate()}
-            disabled={!price || mutation.isPending}
-            className="flex-1 bg-blue-600 text-white rounded px-3 py-2 text-sm disabled:opacity-50"
-          >
+          <button onClick={() => mutation.mutate()} disabled={!price || mutation.isPending} className="flex-1 bg-blue-600 text-white rounded px-3 py-2 text-sm disabled:opacity-50">
             {mutation.isPending ? 'Guardando...' : 'Crear alerta'}
           </button>
         </div>

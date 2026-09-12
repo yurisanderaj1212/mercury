@@ -1,5 +1,7 @@
 'use client';
 
+import React from 'react';
+
 import { useEffect, useState, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useSearchStore } from '@/stores/search.store';
@@ -47,7 +49,7 @@ const SORT_OPTIONS = [
   { value: 'price_desc', label: 'Precio: mayor a menor' },
 ];
 
-export default function SearchPage(): JSX.Element {
+export default function SearchPage(): React.React.JSX.Element {
   const token = useAuthStore((s) => s.token);
   const store = useSearchStore();
   const [inputValue, setInputValue] = useState(store.query);
@@ -220,7 +222,7 @@ export default function SearchPage(): JSX.Element {
   );
 }
 
-function PublicationCard({ item }: { item: SearchResultItem }): JSX.Element {
+function PublicationCard({ item }: { item: SearchResultItem }): React.React.JSX.Element {
   return (
     <Link href={`/publications/${item.id}`} className="block border rounded-lg p-4 hover:shadow-sm transition-shadow bg-white">
       <div className="flex justify-between items-start gap-2">
@@ -242,7 +244,7 @@ function PublicationCard({ item }: { item: SearchResultItem }): JSX.Element {
   );
 }
 
-function Pagination({ page, totalPages, onPageChange }: { page: number; totalPages: number; onPageChange: (p: number) => void }): JSX.Element {
+function Pagination({ page, totalPages, onPageChange }: { page: number; totalPages: number; onPageChange: (p: number) => void }): React.React.JSX.Element {
   if (totalPages <= 1) return <></>;
   return (
     <div className="flex items-center justify-center gap-2 pt-2">
@@ -265,7 +267,7 @@ function Pagination({ page, totalPages, onPageChange }: { page: number; totalPag
   );
 }
 
-function EmptyPrompt(): JSX.Element {
+function EmptyPrompt(): React.React.JSX.Element {
   return (
     <div className="text-center py-16 text-gray-400">
       <p className="text-4xl mb-3">🔍</p>
@@ -274,7 +276,7 @@ function EmptyPrompt(): JSX.Element {
   );
 }
 
-function NoResults({ query }: { query: string }): JSX.Element {
+function NoResults({ query }: { query: string }): React.React.JSX.Element {
   return (
     <div className="text-center py-16 text-gray-400">
       <p className="text-4xl mb-3">😶</p>
@@ -283,7 +285,7 @@ function NoResults({ query }: { query: string }): JSX.Element {
   );
 }
 
-function LoadingSkeleton(): JSX.Element {
+function LoadingSkeleton(): React.React.JSX.Element {
   return (
     <div className="space-y-2 animate-pulse">
       {[1, 2, 3, 4, 5].map((i) => (
@@ -293,7 +295,7 @@ function LoadingSkeleton(): JSX.Element {
   );
 }
 
-function ErrorState(): JSX.Element {
+function ErrorState(): React.React.JSX.Element {
   return (
     <div className="text-center py-12 text-red-500">
       <p className="text-sm">Error al buscar. Verifica tu conexión.</p>

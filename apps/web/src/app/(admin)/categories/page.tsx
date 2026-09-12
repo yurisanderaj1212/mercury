@@ -1,5 +1,7 @@
 'use client';
 
+import React from 'react';
+
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from '@/stores/auth.store';
@@ -15,7 +17,7 @@ interface Category {
   createdAt: string;
 }
 
-export default function AdminCategoriesPage(): JSX.Element {
+export default function AdminCategoriesPage(): React.React.JSX.Element {
   const token = useAuthStore((s) => s.token);
   const queryClient = useQueryClient();
   const [selectedParent, setSelectedParent] = useState<Category | null>(null);
@@ -176,7 +178,7 @@ function CategoryFormModal({
   isPending: boolean;
   error?: string;
   isEdit?: boolean;
-}): JSX.Element {
+}): React.React.JSX.Element {
   const [name, setName] = useState(initial?.name ?? '');
   const [slug, setSlug] = useState(initial?.slug ?? '');
   const [description, setDescription] = useState(initial?.description ?? '');

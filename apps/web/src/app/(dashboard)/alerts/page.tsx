@@ -1,5 +1,7 @@
 'use client';
 
+import React from 'react';
+
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from '@/stores/auth.store';
@@ -43,7 +45,7 @@ const ALERT_TYPE_LABELS: Record<string, string> = {
 
 const PERSONAL_LIMIT = 20;
 
-export default function AlertsPage(): JSX.Element {
+export default function AlertsPage(): React.React.JSX.Element {
   const token = useAuthStore((s) => s.token);
   const queryClient = useQueryClient();
   const [showModal, setShowModal] = useState(false);
@@ -187,7 +189,7 @@ export default function AlertsPage(): JSX.Element {
   );
 }
 
-function NewAlertModal({ onClose, onCreated }: { onClose: () => void; onCreated: () => void }): JSX.Element {
+function NewAlertModal({ onClose, onCreated }: { onClose: () => void; onCreated: () => void }): React.React.JSX.Element {
   const token = useAuthStore((s) => s.token);
   const [productSearch, setProductSearch] = useState('');
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);

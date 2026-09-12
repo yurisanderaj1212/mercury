@@ -1,5 +1,7 @@
 'use client';
 
+import React from 'react';
+
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuthStore } from '@/stores/auth.store';
@@ -17,7 +19,7 @@ export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
-}): JSX.Element {
+}): React.React.JSX.Element {
   const pathname = usePathname();
   const router = useRouter();
   const { user, token, clearAuth } = useAuthStore();
