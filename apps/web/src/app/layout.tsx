@@ -15,7 +15,7 @@ export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
-}): React.React.JSX.Element {
+}): React.JSX.Element {
   return (
     <html lang="es">
       <body className={inter.className}>

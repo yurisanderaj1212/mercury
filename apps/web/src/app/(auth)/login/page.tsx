@@ -13,7 +13,7 @@ const loginSchema = z.object({
   password: z.string().min(8, 'Mínimo 8 caracteres'),
 });
 
-export default function LoginPage(): React.React.JSX.Element {
+export default function LoginPage(): React.JSX.Element {
   const router = useRouter();
   const setAuth = useAuthStore((s) => s.setAuth);
   const [email, setEmail] = useState('');

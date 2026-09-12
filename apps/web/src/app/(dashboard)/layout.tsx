@@ -19,7 +19,7 @@ export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
-}): React.React.JSX.Element {
+}): React.JSX.Element {
   const pathname = usePathname();
   const router = useRouter();
   const { user, token, clearAuth } = useAuthStore();

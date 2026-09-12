@@ -17,7 +17,7 @@ interface Category {
   createdAt: string;
 }
 
-export default function AdminCategoriesPage(): React.React.JSX.Element {
+export default function AdminCategoriesPage(): React.JSX.Element {
   const token = useAuthStore((s) => s.token);
   const queryClient = useQueryClient();
   const [selectedParent, setSelectedParent] = useState<Category | null>(null);
@@ -178,7 +178,7 @@ function CategoryFormModal({
   isPending: boolean;
   error?: string;
   isEdit?: boolean;
-}): React.React.JSX.Element {
+}): React.JSX.Element {
   const [name, setName] = useState(initial?.name ?? '');
   const [slug, setSlug] = useState(initial?.slug ?? '');
   const [description, setDescription] = useState(initial?.description ?? '');

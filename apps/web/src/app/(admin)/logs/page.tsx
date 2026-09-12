@@ -19,7 +19,7 @@ interface LogEntry {
 
 const ENTITY_OPTIONS = ['', 'user', 'publication', 'category', 'alert'];
 
-export default function AdminLogsPage(): React.React.JSX.Element {
+export default function AdminLogsPage(): React.JSX.Element {
   const token = useAuthStore((s) => s.token);
   const [page, setPage] = useState(1);
   const [entityFilter, setEntityFilter] = useState('');

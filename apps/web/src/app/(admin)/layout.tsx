@@ -14,7 +14,7 @@ const ADMIN_LINKS = [
   { href: '/admin/logs', label: 'Auditoría' },
 ];
 
-export default function AdminLayout({ children }: { children: React.ReactNode }): React.React.JSX.Element {
+export default function AdminLayout({ children }: { children: React.ReactNode }): React.JSX.Element {
   const pathname = usePathname();
   const router = useRouter();
   const { user, token, clearAuth } = useAuthStore();

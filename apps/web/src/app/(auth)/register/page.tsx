@@ -20,7 +20,7 @@ const ERROR_MESSAGES: Record<string, string> = {
   INVALID_EMAIL_FORMAT: 'Formato de correo inválido',
 };
 
-export default function RegisterPage(): React.React.JSX.Element {
+export default function RegisterPage(): React.JSX.Element {
   const router = useRouter();
   const setAuth = useAuthStore((s) => s.setAuth);
   const [form, setForm] = useState({ email: '', password: '', fullName: '' });

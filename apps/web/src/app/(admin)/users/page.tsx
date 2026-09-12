@@ -23,7 +23,7 @@ const STATUS_COLORS: Record<string, string> = {
   PENDING: 'bg-yellow-100 text-yellow-700',
 };
 
-export default function AdminUsersPage(): React.React.JSX.Element {
+export default function AdminUsersPage(): React.JSX.Element {
   const token = useAuthStore((s) => s.token);
   const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
@@ -114,7 +114,7 @@ export default function AdminUsersPage(): React.React.JSX.Element {
   );
 }
 
-function PaginationRow({ page, totalPages, onPage }: { page: number; totalPages: number; onPage: (p: number) => void }): React.React.JSX.Element {
+function PaginationRow({ page, totalPages, onPage }: { page: number; totalPages: number; onPage: (p: number) => void }): React.JSX.Element {
   if (totalPages <= 1) return <></>;
   return (
     <div className="flex justify-center gap-2 pt-2">
@@ -125,7 +125,7 @@ function PaginationRow({ page, totalPages, onPage }: { page: number; totalPages:
   );
 }
 
-function TableSkeleton({ cols }: { cols: number }): React.React.JSX.Element {
+function TableSkeleton({ cols }: { cols: number }): React.JSX.Element {
   return (
     <div className="bg-white border rounded-lg overflow-hidden animate-pulse">
       <div className="h-10 bg-gray-100 border-b" />
@@ -140,6 +140,6 @@ function TableSkeleton({ cols }: { cols: number }): React.React.JSX.Element {
   );
 }
 
-function ErrorMsg(): React.React.JSX.Element {
+function ErrorMsg(): React.JSX.Element {
   return <div className="text-center py-12 text-gray-400 text-sm">Error al cargar datos.</div>;
 }

@@ -25,7 +25,7 @@ interface FavoriteItem {
   };
 }
 
-export default function FavoritesPage(): React.React.JSX.Element {
+export default function FavoritesPage(): React.JSX.Element {
   const token = useAuthStore((s) => s.token);
   const { removeFavorite } = useFavoritesStore();
   const queryClient = useQueryClient();

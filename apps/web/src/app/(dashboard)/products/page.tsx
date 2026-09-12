@@ -25,7 +25,7 @@ interface Category {
   name: string;
 }
 
-export default function ProductsPage(): React.React.JSX.Element {
+export default function ProductsPage(): React.JSX.Element {
   const token = useAuthStore((s) => s.token);
   const [categoryFilter, setCategoryFilter] = useState('');
   const [page, setPage] = useState(1);
@@ -122,7 +122,7 @@ export default function ProductsPage(): React.React.JSX.Element {
   );
 }
 
-function GridSkeleton(): React.React.JSX.Element {
+function GridSkeleton(): React.JSX.Element {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 animate-pulse">
       {[1, 2, 3, 4, 5, 6].map((i) => (
