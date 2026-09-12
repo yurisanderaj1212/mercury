@@ -18,6 +18,9 @@ import { PricesModule } from './modules/prices/prices.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { AdminModule } from './modules/admin/admin.module';
+import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
+import { RolesGuard } from './common/guards/roles.guard';
+import { AccountStatusGuard } from './common/guards/account-status.guard';
 
 @Module({
   controllers: [AppController],
@@ -50,11 +53,11 @@ import { AdminModule } from './modules/admin/admin.module';
     AdminModule,
   ],
   providers: [
-    // Apply throttle guard globally
-    {
-      provide: APP_GUARD,
-      useClass: ThrottlerGuard,
-    },
+    // Global guards — registered here so JwtService resolves from AuthModule
+    { provide: APP_GUARD, useClass: ThrottlerGuard },
+    { provide: APP_GUARD, useClass: JwtAuthGuard },
+    { provide: APP_GUARD, useClass: RolesGuard },
+    { provide: APP_GUARD, useClass: AccountStatusGuard },
   ],
 })
 export class AppModule {}
