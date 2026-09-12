@@ -50,7 +50,7 @@ export default function RegisterPage(): React.JSX.Element {
 
       if (res.data) {
         setAuth(res.data.user, res.data.token.accessToken);
-        router.push('/dashboard');
+        window.location.href = '/dashboard';
       }
     } catch (err: unknown) {
       if (err instanceof Error) {
