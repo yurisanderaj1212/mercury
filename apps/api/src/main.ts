@@ -20,10 +20,8 @@ async function bootstrap(): Promise<void> {
   ];
 
   app.enableCors({
-    origin: (origin, callback) => {
-      // Allow requests with no origin (mobile apps, curl, etc.)
+    origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
       if (!origin) return callback(null, true);
-      // Allow exact matches and any vercel.app subdomain of the project
       const isAllowed = allowedOrigins.includes(origin) ||
         /^https:\/\/mercury-web[a-z0-9-]*\.vercel\.app$/.test(origin);
       callback(null, isAllowed);
