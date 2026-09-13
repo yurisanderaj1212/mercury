@@ -15,7 +15,7 @@ import { TokenBlacklistService } from './token-blacklist.service';
       useFactory: (config: ConfigService) => ({
         secret: config.get<string>('JWT_SECRET', 'dev-secret-change-in-production'),
         signOptions: {
-          expiresIn: config.get<number>('JWT_EXPIRY', 86400),
+          expiresIn: '24h',
         },
       }),
     }),
