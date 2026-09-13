@@ -1,10 +1,12 @@
 'use client';
 
+import React from 'react';
+
 import { useQuery } from '@tanstack/react-query';
 import { useAuthStore } from '@/stores/auth.store';
 import { apiClient } from '@/lib/api-client';
 
-export default function DashboardPage(): JSX.Element {
+export default function DashboardPage(): React.JSX.Element {
   const token = useAuthStore((s) => s.token);
 
   const { data, isLoading, isError } = useQuery({
@@ -93,7 +95,7 @@ export default function DashboardPage(): JSX.Element {
   );
 }
 
-function StatCard({ label, value }: { label: string; value: string | number }): JSX.Element {
+function StatCard({ label, value }: { label: string; value: string | number }): React.JSX.Element {
   return (
     <div className="border rounded-lg p-4 bg-white">
       <p className="text-sm text-gray-500">{label}</p>

@@ -1,5 +1,7 @@
 'use client';
 
+import React from 'react';
+
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { z } from 'zod';
@@ -18,7 +20,7 @@ const ERROR_MESSAGES: Record<string, string> = {
   INVALID_EMAIL_FORMAT: 'Formato de correo inválido',
 };
 
-export default function RegisterPage(): JSX.Element {
+export default function RegisterPage(): React.JSX.Element {
   const router = useRouter();
   const setAuth = useAuthStore((s) => s.setAuth);
   const [form, setForm] = useState({ email: '', password: '', fullName: '' });
@@ -48,7 +50,7 @@ export default function RegisterPage(): JSX.Element {
 
       if (res.data) {
         setAuth(res.data.user, res.data.token.accessToken);
-        router.push('/dashboard');
+        window.location.href = '/dashboard';
       }
     } catch (err: unknown) {
       if (err instanceof Error) {

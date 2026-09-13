@@ -1,12 +1,12 @@
 'use client';
 
+import React, { useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from '@/stores/auth.store';
 import { useFavoritesStore } from '@/stores/favorites.store';
 import { apiClient } from '@/lib/api-client';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { useEffect } from 'react';
 
 interface PublicationDetail {
   id: string;
@@ -27,11 +27,11 @@ interface PublicationDetail {
   images?: Array<{ id: string; url: string }>;
 }
 
-export default function PublicationDetailPage(): JSX.Element {
+export default function PublicationDetailPage(): React.JSX.Element {
   const { id } = useParams<{ id: string }>();
   const token = useAuthStore((s) => s.token);
   const queryClient = useQueryClient();
-  const { favoriteIds, addFavorite, removeFavorite, setFavorites, isFavorite } = useFavoritesStore();
+  const { addFavorite, removeFavorite, setFavorites, isFavorite } = useFavoritesStore();
 
   const { data: publication, isLoading, isError } = useQuery({
     queryKey: ['publication', id],
@@ -41,7 +41,6 @@ export default function PublicationDetailPage(): JSX.Element {
     },
   });
 
-  // Sync favorites from server
   const { data: favs } = useQuery({
     queryKey: ['favorites-ids'],
     queryFn: async () => {
@@ -67,12 +66,10 @@ export default function PublicationDetailPage(): JSX.Element {
       }
     },
     onMutate: () => {
-      // Optimistic update
       if (isFavorite(id)) removeFavorite(id);
       else addFavorite(id);
     },
     onError: () => {
-      // Rollback
       if (isFavorite(id)) removeFavorite(id);
       else addFavorite(id);
       void queryClient.invalidateQueries({ queryKey: ['favorites-ids'] });
@@ -104,7 +101,6 @@ export default function PublicationDetailPage(): JSX.Element {
         <Link href="/search" className="text-xs text-gray-400 hover:text-gray-600">← Volver</Link>
       </div>
 
-      {/* Images */}
       {publication.images && publication.images.length > 0 && (
         <div className="flex gap-2 overflow-x-auto">
           {publication.images.map((img) => (
@@ -114,7 +110,6 @@ export default function PublicationDetailPage(): JSX.Element {
         </div>
       )}
 
-      {/* Title + price */}
       <div className="flex items-start justify-between gap-4">
         <div className="flex-1">
           <h1 className="text-xl font-bold">{publication.title}</h1>
@@ -133,7 +128,6 @@ export default function PublicationDetailPage(): JSX.Element {
         </div>
       </div>
 
-      {/* Favorite button */}
       <button
         onClick={() => favoriteMutation.mutate()}
         disabled={favoriteMutation.isPending}
@@ -144,7 +138,6 @@ export default function PublicationDetailPage(): JSX.Element {
         {isFav ? '♥ En favoritos' : '♡ Agregar a favoritos'}
       </button>
 
-      {/* Description */}
       {publication.description && (
         <div className="border rounded-lg p-4">
           <h2 className="text-sm font-semibold mb-2">Descripción</h2>
@@ -152,7 +145,6 @@ export default function PublicationDetailPage(): JSX.Element {
         </div>
       )}
 
-      {/* Details */}
       <div className="border rounded-lg p-4 space-y-2 text-sm">
         <h2 className="font-semibold mb-2">Detalles</h2>
         {publication.seller && (
@@ -177,7 +169,7 @@ export default function PublicationDetailPage(): JSX.Element {
   );
 }
 
-function Row({ label, value }: { label: string; value: string }): JSX.Element {
+function Row({ label, value }: { label: string; value: string }): React.JSX.Element {
   return (
     <div className="flex justify-between gap-2">
       <span className="text-gray-500 shrink-0">{label}</span>

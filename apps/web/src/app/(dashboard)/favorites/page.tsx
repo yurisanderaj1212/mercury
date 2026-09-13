@@ -1,5 +1,7 @@
 'use client';
 
+import React from 'react';
+
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from '@/stores/auth.store';
@@ -23,7 +25,7 @@ interface FavoriteItem {
   };
 }
 
-export default function FavoritesPage(): JSX.Element {
+export default function FavoritesPage(): React.JSX.Element {
   const token = useAuthStore((s) => s.token);
   const { removeFavorite } = useFavoritesStore();
   const queryClient = useQueryClient();

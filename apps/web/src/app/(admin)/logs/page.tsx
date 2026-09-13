@@ -1,5 +1,7 @@
 'use client';
 
+import React from 'react';
+
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useAuthStore } from '@/stores/auth.store';
@@ -17,7 +19,7 @@ interface LogEntry {
 
 const ENTITY_OPTIONS = ['', 'user', 'publication', 'category', 'alert'];
 
-export default function AdminLogsPage(): JSX.Element {
+export default function AdminLogsPage(): React.JSX.Element {
   const token = useAuthStore((s) => s.token);
   const [page, setPage] = useState(1);
   const [entityFilter, setEntityFilter] = useState('');

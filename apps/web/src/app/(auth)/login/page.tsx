@@ -1,5 +1,7 @@
 'use client';
 
+import React from 'react';
+
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { z } from 'zod';
@@ -11,7 +13,7 @@ const loginSchema = z.object({
   password: z.string().min(8, 'Mínimo 8 caracteres'),
 });
 
-export default function LoginPage(): JSX.Element {
+export default function LoginPage(): React.JSX.Element {
   const router = useRouter();
   const setAuth = useAuthStore((s) => s.setAuth);
   const [email, setEmail] = useState('');
@@ -38,7 +40,8 @@ export default function LoginPage(): JSX.Element {
 
       if (res.data) {
         setAuth(res.data.user, res.data.token.accessToken);
-        router.push('/dashboard');
+        // Use window.location for hard navigation to ensure the store is persisted
+        window.location.href = '/dashboard';
       }
     } catch (err: unknown) {
       if (err instanceof Error) {
