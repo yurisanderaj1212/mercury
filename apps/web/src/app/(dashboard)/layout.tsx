@@ -8,7 +8,7 @@ import { useAuthStore } from '@/stores/auth.store';
 import { apiClient } from '@/lib/api-client';
 
 const NAV_LINKS = [
-  { href: '/dashboard', label: 'Dashboard' },
+  { href: '/', label: 'Dashboard' },
   { href: '/search', label: 'Buscar' },
   { href: '/products', label: 'Productos' },
   { href: '/alerts', label: 'Alertas' },
@@ -36,7 +36,7 @@ export default function DashboardLayout({
     <div className="min-h-screen flex flex-col">
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-white border-b h-14 flex items-center px-4 gap-4">
-        <Link href="/dashboard" className="font-bold text-blue-600 text-lg mr-4">Mercury</Link>
+        <Link href="/" className="font-bold text-blue-600 text-lg mr-4">Mercury</Link>
         <div className="flex-1">
           <Link href="/search">
             <input
