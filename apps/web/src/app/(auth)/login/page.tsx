@@ -40,8 +40,7 @@ export default function LoginPage(): React.JSX.Element {
 
       if (res.data) {
         setAuth(res.data.user, res.data.token.accessToken);
-        // Use window.location for hard navigation to ensure the store is persisted
-        window.location.href = '/dashboard';
+        window.location.href = '/';
       }
     } catch (err: unknown) {
       if (err instanceof Error) {
